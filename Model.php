@@ -81,16 +81,14 @@ class Model
                     $stmt = $pdo->prepare(sprintf("INSERT INTO %s SET %s", static::$db_table, $set));
                     $res = $stmt->execute($values);
                 } catch ( Exception $e ) {
-                    app_log($e);
-                    return false;
+                    throw $e;
                 }
 
                 if ( $res && $last_insert_id = $pdo->lastInsertId() ) {
                     $this->$pk = $last_insert_id;
                     return $this->$pk;
                 } else {
-                    app_log($stmt->errorInfo());
-                    throw new Exception(sprintf("Could not save %s", get_class($this)));
+                    throw new Exception(sprintf("Could not save %s (%s)", get_class($this), $stmt->errorInfo()));
                 }
 
             } else {
@@ -99,8 +97,7 @@ class Model
                     $stmt = $pdo->prepare(sprintf("UPDATE %s SET %s WHERE %s = %s LIMIT 1", static::$db_table, $set, $pk, $this->$pk));
                     return $stmt->execute($values);
                 } catch ( Exception $e ) {
-                    app_log($e);
-                    return false;
+                    throw $e;
                 }
 
             }
@@ -206,7 +203,7 @@ class Model
                         self::$pdo = $pdo;
 
                     } catch ( Exception $e ) {
-                        echo $e . PHP_EOL;
+                        throw $e;
                     }
 
                 } else {
