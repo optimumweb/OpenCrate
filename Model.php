@@ -47,8 +47,12 @@ class Model
         return [];
     }
 
-    public function save()
+    public function save($options = [])
     {
+        $options = array_merge([
+            'return_query_string' => false
+        ], $options);
+
         if ( $pdo = self::get_PDO() ) {
 
             $pk = static::$primary_key;
@@ -77,7 +81,13 @@ class Model
 
             if ( $this->$pk === null ) {
 
-                $stmt = $pdo->prepare(sprintf("INSERT INTO %s SET %s", static::$db_table, $set));
+                $query_str = sprintf("INSERT INTO %s SET %s", static::$db_table, $set);
+
+                if ( $options['return_query_string'] ) {
+                    return $query_str;
+                }
+
+                $stmt = $pdo->prepare($query_str);
                 $res = $stmt->execute($values);
 
                 if ( $res && $last_insert_id = $pdo->lastInsertId() ) {
@@ -89,7 +99,13 @@ class Model
 
             } else {
 
-                $stmt = $pdo->prepare(sprintf("UPDATE %s SET %s WHERE %s = %s LIMIT 1", static::$db_table, $set, $pk, $this->$pk));
+                $query_str = sprintf("UPDATE %s SET %s WHERE %s = %s LIMIT 1", static::$db_table, $set, $pk, $this->$pk);
+
+                if ( $options['return_query_string'] ) {
+                    return $query_str;
+                }
+
+                $stmt = $pdo->prepare($query_str);
                 return $stmt->execute($values);
 
             }
@@ -114,17 +130,17 @@ class Model
 
     public static function where($property, $value, $options = [])
     {
+        $options = array_merge([
+            'first'    => false,
+            'limit'    => null,
+            'order_by' => null
+        ], $options);
+
+        if ( $options['first'] && $options['limit'] === null ) {
+            $options['limit'] = 1;
+        }
+
         if ( $pdo = self::get_PDO() ) {
-
-            $options = array_merge([
-                'first'    => false,
-                'limit'    => null,
-                'order_by' => null
-            ], $options);
-
-            if ( $options['first'] && $options['limit'] === null ) {
-                $options['limit'] = 1;
-            }
 
             $order_by_str = isset($options['order_by']) ? sprintf("ORDER BY %s", $options['order_by']) : "";
             $limit_str    = isset($options['limit'])    ? sprintf("LIMIT %s", $options['limit'])       : "";
