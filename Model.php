@@ -203,12 +203,13 @@ class Model
 
                 if ( extension_loaded('pdo') && class_exists('PDO') && defined('PDO::ATTR_DRIVER_NAME') ) {
 
-                    $pdo = new PDO(DB_DSN, DB_USER, DB_PASS);
-                    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-
-                    self::$pdo = $pdo;
-
-                    return $pdo;
+                    try {
+                        $pdo = new PDO(DB_DSN, DB_USER, DB_PASS);
+                        $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+                        self::$pdo = $pdo;
+                    } catch ( \PDOException $e ) {
+                        throw new \Exception("PDO error! " . $e);
+                    }
 
                 } else {
                     throw new \Exception("PDO not available!");
