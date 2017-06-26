@@ -77,12 +77,8 @@ class Model
 
             if ( $this->$pk === null ) {
 
-                try {
-                    $stmt = $pdo->prepare(sprintf("INSERT INTO %s SET %s", static::$db_table, $set));
-                    $res = $stmt->execute($values);
-                } catch ( Exception $e ) {
-                    throw $e;
-                }
+                $stmt = $pdo->prepare(sprintf("INSERT INTO %s SET %s", static::$db_table, $set));
+                $res = $stmt->execute($values);
 
                 if ( $res && $last_insert_id = $pdo->lastInsertId() ) {
                     $this->$pk = $last_insert_id;
@@ -93,12 +89,8 @@ class Model
 
             } else {
 
-                try {
-                    $stmt = $pdo->prepare(sprintf("UPDATE %s SET %s WHERE %s = %s LIMIT 1", static::$db_table, $set, $pk, $this->$pk));
-                    return $stmt->execute($values);
-                } catch ( Exception $e ) {
-                    throw $e;
-                }
+                $stmt = $pdo->prepare(sprintf("UPDATE %s SET %s WHERE %s = %s LIMIT 1", static::$db_table, $set, $pk, $this->$pk));
+                return $stmt->execute($values);
 
             }
 
@@ -195,16 +187,10 @@ class Model
 
                 if ( extension_loaded('pdo') && class_exists('PDO') && defined('PDO::ATTR_DRIVER_NAME') ) {
 
-                    try {
+                    $pdo = new PDO(DB_DSN, DB_USER, DB_PASS);
+                    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-                        $pdo = new PDO(DB_DSN, DB_USER, DB_PASS);
-                        $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-
-                        self::$pdo = $pdo;
-
-                    } catch ( Exception $e ) {
-                        throw $e;
-                    }
+                    self::$pdo = $pdo;
 
                 } else {
                     echo "PDO not available!" . PHP_EOL;
