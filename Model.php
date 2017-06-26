@@ -84,7 +84,7 @@ class Model
                     $this->$pk = $last_insert_id;
                     return $this->$pk;
                 } else {
-                    throw new Exception(sprintf("Could not save %s (%s)", get_class($this), $stmt->errorInfo()));
+                    throw new \Exception(sprintf("Could not save %s (%s)", get_class($this), $stmt->errorInfo()));
                 }
 
             } else {
@@ -95,7 +95,7 @@ class Model
             }
 
         } else {
-            throw new Exception("No database available");
+            throw new \Exception("No database available");
         }
     }
 
@@ -108,7 +108,7 @@ class Model
                 return new static($stmt->fetch());
             }
         } else {
-            throw new Exception("No database available");
+            throw new \Exception("No database available");
         }
     }
 
@@ -143,7 +143,7 @@ class Model
             }
 
         } else {
-            throw new Exception("No database available");
+            throw new \Exception("No database available");
         }
     }
 
@@ -193,7 +193,7 @@ class Model
                     self::$pdo = $pdo;
 
                 } else {
-                    echo "PDO not available!" . PHP_EOL;
+                    throw new \Exception("PDO not available!");
                 }
 
             }
