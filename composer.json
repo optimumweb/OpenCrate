@@ -8,6 +8,7 @@
       "email": "info@optimumweb.ca"
     }
   ],
+  "license": "MIT",
   "require": {
     "php": ">=5.4.0"
   },
