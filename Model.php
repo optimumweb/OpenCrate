@@ -203,6 +203,8 @@ class Model
 
                 if ( extension_loaded('pdo') && class_exists('PDO') && defined('PDO::ATTR_DRIVER_NAME') ) {
 
+                    return 7;
+
                     $pdo = new PDO(DB_DSN, DB_USER, DB_PASS);
                     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
