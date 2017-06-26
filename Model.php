@@ -204,8 +204,8 @@ class Model
                 if ( extension_loaded('pdo') && class_exists('PDO') && defined('PDO::ATTR_DRIVER_NAME') ) {
 
                     try {
-                        $pdo = new PDO(DB_DSN, DB_USER, DB_PASS);
-                        $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+                        $pdo = new \PDO(DB_DSN, DB_USER, DB_PASS);
+                        $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
                         self::$pdo = $pdo;
                     } catch ( \PDOException $e ) {
                         throw new \Exception("PDO error! " . $e);
@@ -219,7 +219,7 @@ class Model
 
         }
 
-        if ( self::$pdo !== null && self::$pdo instanceof PDO ) {
+        if ( self::$pdo !== null && self::$pdo instanceof \PDO ) {
             return self::$pdo;
         }
     }
