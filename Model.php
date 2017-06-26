@@ -133,6 +133,10 @@ class Model
                 'order_by' => null
             ], $options);
 
+            if ( $options['first'] && $options['limit'] === null ) {
+                $options['limit'] = 1;
+            }
+
             $order_by_str = isset($options['order_by']) ? sprintf("ORDER BY %s", $options['order_by']) : "";
             $limit_str    = isset($options['limit'])    ? sprintf("LIMIT %s", $options['limit'])       : "";
 
