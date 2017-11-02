@@ -148,12 +148,18 @@ class Model
             $stmt = $pdo->prepare(sprintf("SELECT * FROM %s WHERE %s = :value %s %s", static::$db_table, $property, $order_by_str, $limit_str));
             $stmt->execute([ 'value' => $value ]);
 
+            $stmt_row_count = $stmt->rowCount();
+
             if ( $options['first'] ) {
-                return new static($stmt->fetch());
+                if ( $stmt_row_count == 1 ) {
+                    return new static($stmt->fetch());
+                }
             } else {
                 $records = [];
-                foreach ( $stmt as $record ) {
-                    $records[] = new static($record);
+                if ( $stmt_row_count > 0 ) {
+                    foreach ( $stmt as $record ) {
+                        $records[] = new static($record);
+                    }
                 }
                 return $records;
             }
